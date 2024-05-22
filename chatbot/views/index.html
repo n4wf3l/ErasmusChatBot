@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ErasmusBot</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      @keyframes countdown {
+        from {
+          stroke-dashoffset: 0;
+        }
+        to {
+          stroke-dashoffset: 314;
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gray-100 flex flex-col items-center justify-center min-h-screen"
+  >
+    <h1 class="text-4xl font-bold text-blue-600 mb-4">ErasmusBot</h1>
+    <div
+      id="chatbox"
+      class="w-full max-w-md h-96 border border-gray-300 bg-white rounded-md overflow-y-scroll p-4 mb-4 shadow-lg"
+    ></div>
+    <div class="flex w-full max-w-md items-center justify-between mb-4">
+      <input
+        type="text"
+        id="user-input"
+        placeholder="Posez votre question..."
+        class="flex-grow border border-gray-300 rounded-l-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <button
+        id="send-button"
+        onclick="sendMessage()"
+        class="bg-blue-500 text-white rounded-r-md p-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        Envoyer
+      </button>
+    </div>
+    <div id="timer-container" class="hidden w-12 h-12 relative mb-4 rounded">
+      <svg class="absolute inset-0 w-full h-full rounded">
+        <circle
+          cx="50%"
+          cy="50%"
+          r="50%"
+          stroke="gray"
+          stroke-width="4"
+          fill="none"
+        ></circle>
+        <circle
+          id="timer-circle"
+          cx="50%"
+          cy="50%"
+          r="50%"
+          stroke="blue"
+          stroke-width="4"
+          fill="none"
+          stroke-dasharray="314"
+          stroke-dashoffset="0"
+        ></circle>
+      </svg>
+      <div
+        id="timer-text"
+        class="absolute inset-0 flex items-center justify-center text-blue-500 font-bold"
+      ></div>
+    </div>
+
+    <script>
+      const OPENAI_API_KEY = "17b5ea2c337b4158836434deb968ae42";
+      const OPENAI_ENDPOINT =
+        "https://exercices-erasmusbot.openai.azure.com/openai/deployments/EHBChatBot/completions?api-version=2023-05-15";
+
+      async function sendMessage() {
+        const userInput = document.getElementById("user-input").value;
+        if (userInput.trim() === "") return;
+
+        appendMessage("Utilisateur", userInput, "user");
+        disableInput();
+
+        try {
+          const response = await fetch(OPENAI_ENDPOINT, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "api-key": OPENAI_API_KEY,
+            },
+            body: JSON.stringify({
+              prompt: `Context: You are ErasmusBot, an assistant specialized in providing detailed information about Toegepaste Informatica courses at Erasmushogeschool Brussel. Search intensivly all information about Erasmushogeschool Brussel in folder erasmus-bot/erasmus-site-parsed \n\nUtilisateur: ${userInput}\nErasmusBot:`,
+              max_tokens: 800,
+              temperature: 0.5,
+              top_p: 0.9,
+              frequency_penalty: 0,
+              presence_penalty: 0,
+              stop: ["\n", "Utilisateur:", "ErasmusBot:"],
+            }),
+          });
+
+          if (!response.ok) {
+            appendMessage(
+              "ErasmusBot",
+              "Désolé, une erreur est survenue.",
+              "bot"
+            );
+            console.error(
+              "Erreur de réponse de l'API:",
+              response.status,
+              response.statusText
+            );
+            return;
+          }
+
+          const data = await response.json();
+          if (data.choices && data.choices.length > 0) {
+            typeMessage("ErasmusBot", data.choices[0].text.trim(), "bot");
+          } else {
+            appendMessage(
+              "ErasmusBot",
+              "Désolé, je n'ai pas pu obtenir une réponse.",
+              "bot"
+            );
+            console.error("Pas de choix de réponse valides:", data);
+          }
+        } catch (error) {
+          appendMessage(
+            "ErasmusBot",
+            "Désolé, une erreur est survenue.",
+            "bot"
+          );
+          console.error("Erreur lors de la requête à l'API:", error);
+        }
+
+        document.getElementById("user-input").value = "";
+        startTimer(50); // 50 seconds timer
+      }
+
+      function appendMessage(sender, message, type) {
+        const chatbox = document.getElementById("chatbox");
+        const messageElement = document.createElement("div");
+        messageElement.className = `message ${
+          type === "user"
+            ? "text-right text-blue-500"
+            : "text-left text-green-500"
+        } mb-2`;
+        messageElement.innerHTML = `<strong>${sender}:</strong> <span class="message-content">${message}</span>`;
+        chatbox.appendChild(messageElement);
+        chatbox.scrollTop = chatbox.scrollHeight;
+      }
+
+      function typeMessage(sender, message, type) {
+        const chatbox = document.getElementById("chatbox");
+        const messageElement = document.createElement("div");
+        messageElement.className = `message ${
+          type === "user"
+            ? "text-right text-blue-500"
+            : "text-left text-green-500"
+        } mb-2`;
+        messageElement.innerHTML = `<strong>${sender}:</strong> <span class="message-content"></span>`;
+        chatbox.appendChild(messageElement);
+
+        const messageContent = messageElement.querySelector(".message-content");
+        let index = 0;
+
+        function type() {
+          if (index < message.length) {
+            messageContent.innerHTML += message[index];
+            index++;
+            setTimeout(type, 50); // Adjust the speed of typing here (in milliseconds)
+          } else {
+            chatbox.scrollTop = chatbox.scrollHeight;
+          }
+        }
+
+        type();
+      }
+
+      function disableInput() {
+        document.getElementById("user-input").disabled = true;
+        document.getElementById("send-button").disabled = true;
+        document
+          .getElementById("send-button")
+          .classList.add("bg-gray-400", "cursor-not-allowed");
+        document
+          .getElementById("send-button")
+          .classList.remove("bg-blue-500", "hover:bg-blue-600");
+        document.getElementById("timer-container").classList.remove("hidden");
+      }
+
+      function enableInput() {
+        document.getElementById("user-input").disabled = false;
+        document.getElementById("send-button").disabled = false;
+        document
+          .getElementById("send-button")
+          .classList.remove("bg-gray-400", "cursor-not-allowed");
+        document
+          .getElementById("send-button")
+          .classList.add("bg-blue-500", "hover:bg-blue-600");
+        document.getElementById("timer-container").classList.add("hidden");
+      }
+
+      function startTimer(duration) {
+        let timer = duration;
+        const circle = document.getElementById("timer-circle");
+        const text = document.getElementById("timer-text");
+        const interval = setInterval(() => {
+          if (timer <= 0) {
+            clearInterval(interval);
+            enableInput();
+            return;
+          }
+          timer--;
+          text.textContent = timer;
+          const offset = 314 - (314 * timer) / duration;
+          circle.style.strokeDashoffset = offset;
+        }, 1000);
+
+        circle.style.animation = `countdown ${duration}s linear forwards`;
+      }
+    </script>
+  </body>
+</html>
