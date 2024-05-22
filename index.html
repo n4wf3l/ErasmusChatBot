@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ErasmusBot</title>
+    <style>
+      #chatbox {
+        width: 300px;
+        height: 400px;
+        border: 1px solid #ccc;
+        overflow-y: scroll;
+        padding: 10px;
+        font-family: Arial, sans-serif;
+      }
+      .message {
+        padding: 5px;
+        margin: 5px;
+      }
+      .user {
+        text-align: right;
+        color: blue;
+      }
+      .bot {
+        text-align: left;
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>ErasmusBot</h1>
+    <div id="chatbox"></div>
+    <input type="text" id="user-input" placeholder="Posez votre question..." />
+    <button onclick="sendMessage()">Envoyer</button>
+
+    <script>
+      const OPENAI_API_KEY = "17b5ea2c337b4158836434deb968ae42";
+      const OPENAI_ENDPOINT =
+        "https://exercices-erasmusbot.openai.azure.com/openai/deployments/EHBChatBot/completions?api-version=2023-05-15";
+
+      async function sendMessage() {
+        const userInput = document.getElementById("user-input").value;
+        if (userInput.trim() === "") return;
+
+        appendMessage("Utilisateur", userInput, "user");
+
+        try {
+          const response = await fetch(OPENAI_ENDPOINT, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "api-key": OPENAI_API_KEY,
+            },
+            body: JSON.stringify({
+              prompt: `Context: You are ErasmusBot, an assistant specialized in providing detailed information about Toegepaste Informatica courses at Erasmushogeschool Brussel. Search intensivly all information about Erasmushogeschool Brussel in folder erasmus-bot/erasmus-site-parsed \n\nUtilisateur: ${userInput}\nErasmusBot:`,
+              max_tokens: 800,
+              temperature: 0.5,
+              top_p: 0.9,
+              frequency_penalty: 0,
+              presence_penalty: 0,
+              stop: ["\n", "Utilisateur:", "ErasmusBot:"],
+            }),
+          });
+
+          if (!response.ok) {
+            appendMessage(
+              "ErasmusBot",
+              "Désolé, une erreur est survenue.",
+              "bot"
+            );
+            console.error(
+              "Erreur de réponse de l'API:",
+              response.status,
+              response.statusText
+            );
+            return;
+          }
+
+          const data = await response.json();
+          if (data.choices && data.choices.length > 0) {
+            appendMessage("ErasmusBot", data.choices[0].text.trim(), "bot");
+          } else {
+            appendMessage(
+              "ErasmusBot",
+              "Désolé, je n'ai pas pu obtenir une réponse.",
+              "bot"
+            );
+            console.error("Pas de choix de réponse valides:", data);
+          }
+        } catch (error) {
+          appendMessage(
+            "ErasmusBot",
+            "Désolé, une erreur est survenue.",
+            "bot"
+          );
+          console.error("Erreur lors de la requête à l'API:", error);
+        }
+
+        document.getElementById("user-input").value = "";
+      }
+
+      function appendMessage(sender, message, type) {
+        const chatbox = document.getElementById("chatbox");
+        const messageElement = document.createElement("div");
+        messageElement.className = `message ${type}`;
+        messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
+        chatbox.appendChild(messageElement);
+        chatbox.scrollTop = chatbox.scrollHeight;
+      }
+    </script>
+  </body>
+</html>
