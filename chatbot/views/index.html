@@ -13,7 +13,19 @@
   <body
     class="bg-gray-100 flex flex-col items-center justify-center min-h-screen"
   >
-    <h1 class="text-4xl font-bold text-blue-600 mb-4">ErasmusBot</h1>
+    <!-- Navbar -->
+    <nav class="w-full bg-white shadow-md py-4 mb-8">
+      <div class="container mx-auto flex items-center justify-between px-6">
+        <!-- Logo -->
+        <div class="flex items-center space-x-4">
+          <img src="erasmuslogo.png" alt="Logo" class="w-full" />
+        </div>
+        <!-- Title -->
+        <h1 class="text-xl font-bold text-red-600">ErasmusBot</h1>
+      </div>
+    </nav>
+
+    <h1 class="text-4xl font-bold text-red-600 mb-4">ErasmusBot</h1>
     <div
       id="chatbox"
       class="w-full max-w-2xl h-96 border border-gray-300 bg-white rounded-md overflow-y-scroll p-4 mb-4 shadow-lg"
@@ -22,44 +34,45 @@
       <input
         type="text"
         id="user-input"
-        placeholder="Posez votre question..."
-        class="flex-grow border border-gray-300 rounded-l-md p-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Ask your question..."
+        class="flex-grow border border-gray-300 rounded-l-md p-4 focus:outline-none focus:ring-2 focus:ring-red-600"
       />
       <button
         id="send-button"
         onclick="sendMessage()"
-        class="bg-blue-500 text-white rounded-r-md p-4 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="bg-red-500 text-white rounded-r-md p-4 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-600"
       >
-        Envoyer
+        Send
       </button>
     </div>
-    <div id="timer-container" class="hidden w-12 h-12 relative mb-4 rounded">
-      <svg class="absolute inset-0 w-full h-full rounded">
+    <div id="timer-container" class="hidden w-12 h-12 relative mb-4">
+      <svg class="absolute inset-0" viewBox="0 0 100 100">
         <circle
-          cx="50%"
-          cy="50%"
-          r="50%"
+          cx="50"
+          cy="50"
+          r="45"
           stroke="gray"
           stroke-width="4"
           fill="none"
         ></circle>
         <circle
           id="timer-circle"
-          cx="50%"
-          cy="50%"
-          r="50%"
-          stroke="blue"
+          cx="50"
+          cy="50"
+          r="45"
+          stroke="red"
           stroke-width="4"
           fill="none"
-          stroke-dasharray="314"
+          stroke-dasharray="282.743"
           stroke-dashoffset="0"
         ></circle>
       </svg>
       <div
         id="timer-text"
-        class="absolute inset-0 flex items-center justify-center text-blue-500 font-bold"
+        class="absolute inset-0 flex items-center justify-center text-red-500 font-bold"
       ></div>
-      <script src="index.js"></script>
     </div>
+
+    <script src="index.js"></script>
   </body>
 </html>

@@ -30,8 +30,8 @@ async function sendMessage() {
          
         Feel free to inquire about specific courses, modules, or any other aspect of the Toegepaste Informatica program. Search intensivly all information about Erasmushogeschool Brussel in folder erasmus-bot/erasmus-site-parsed \n\nUser: ${userInput}\nErasmusBot:`,
         max_tokens: 800,
-        temperature: 0.5,
-        top_p: 0.9,
+        temperature: 0,
+        top_p: 1,
         frequency_penalty: 0,
         presence_penalty: 0,
         stop: ["\n", "User:", "ErasmusBot:"],
@@ -39,9 +39,9 @@ async function sendMessage() {
     });
 
     if (!response.ok) {
-      appendMessage("ErasmusBot", "Désolé, une erreur est survenue.", "bot");
+      appendMessage("ErasmusBot", "Sorry, an error has occurred.", "bot");
       console.error(
-        "Erreur de réponse de l'API:",
+        "API response error:",
         response.status,
         response.statusText
       );
@@ -52,16 +52,12 @@ async function sendMessage() {
     if (data.choices && data.choices.length > 0) {
       typeMessage("ErasmusBot", data.choices[0].text.trim(), "bot");
     } else {
-      appendMessage(
-        "ErasmusBot",
-        "Désolé, je n'ai pas pu obtenir une réponse.",
-        "bot"
-      );
-      console.error("Pas de choix de réponse valides:", data);
+      appendMessage("ErasmusBot", "Sorry, I couldn't get an answer.", "bot");
+      console.error("No valid answer choices:", data);
     }
   } catch (error) {
-    appendMessage("ErasmusBot", "Désolé, une erreur est survenue.", "bot");
-    console.error("Erreur lors de la requête à l'API:", error);
+    appendMessage("ErasmusBot", "Sorry, an error has occurred.", "bot");
+    console.error("Error when requesting API:", error);
   }
 
   document.getElementById("user-input").value = "";
