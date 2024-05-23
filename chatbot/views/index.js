@@ -67,10 +67,22 @@ async function sendMessage() {
 function appendMessage(sender, message, type) {
   const chatbox = document.getElementById("chatbox");
   const messageElement = document.createElement("div");
-  messageElement.className = `message ${
-    type === "user" ? "text-right text-blue-500" : "text-left text-green-500"
-  } mb-2`;
-  messageElement.innerHTML = `<strong>${sender}:</strong> <span class="message-content">${message}</span>`;
+  messageElement.className = `message flex items-start mb-2 ${
+    type === "user"
+      ? "justify-end text-blue-500"
+      : "justify-start text-green-500"
+  }`;
+
+  const avatar =
+    type === "user"
+      ? `<img src="user.png" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">`
+      : `<img src="ai.png" alt="Bot Avatar" class="w-8 h-8 rounded-full mr-2">`;
+
+  messageElement.innerHTML =
+    type === "user"
+      ? `<div class="flex items-center">${avatar}<span class="message-content bg-blue-100 p-2 rounded-lg max-w-xs">${message}</span></div>`
+      : `<div class="flex items-center">${avatar}<span class="message-content bg-green-100 p-2 rounded-lg max-w-xs">${message}</span></div>`;
+
   chatbox.appendChild(messageElement);
   chatbox.scrollTop = chatbox.scrollHeight;
 }
@@ -78,10 +90,22 @@ function appendMessage(sender, message, type) {
 function typeMessage(sender, message, type) {
   const chatbox = document.getElementById("chatbox");
   const messageElement = document.createElement("div");
-  messageElement.className = `message ${
-    type === "user" ? "text-right text-blue-500" : "text-left text-green-500"
-  } mb-2`;
-  messageElement.innerHTML = `<strong>${sender}:</strong> <span class="message-content"></span>`;
+  messageElement.className = `message flex items-start mb-2 ${
+    type === "user"
+      ? "justify-end text-blue-500"
+      : "justify-start text-green-500"
+  }`;
+
+  const avatar =
+    type === "user"
+      ? `<img src="user.png" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">`
+      : `<img src="ai.png" alt="Bot Avatar" class="w-8 h-8 rounded-full mr-2">`;
+
+  messageElement.innerHTML =
+    type === "user"
+      ? `<div class="flex items-center">${avatar}<span class="message-content bg-blue-100 p-2 rounded-lg max-w-xs"></span></div>`
+      : `<div class="flex items-center">${avatar}<span class="message-content bg-green-100 p-2 rounded-lg max-w-xs"></span></div>`;
+
   chatbox.appendChild(messageElement);
 
   const messageContent = messageElement.querySelector(".message-content");
