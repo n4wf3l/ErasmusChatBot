@@ -7,6 +7,25 @@
     stroke-dashoffset: 0;
   }
   to {
-    stroke-dashoffset: 314;
+    stroke-dashoffset: 282.743; /* Ajuster la valeur pour correspondre au périmètre du cercle */
+  }
+}
+
+@keyframes fade-in-out {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  10% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-100%);
   }
 }
