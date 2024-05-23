@@ -2,6 +2,8 @@ const OPENAI_API_KEY = "17b5ea2c337b4158836434deb968ae42";
 const OPENAI_ENDPOINT =
   "https://exercices-erasmusbot.openai.azure.com/openai/deployments/EHBChatBot/completions?api-version=2023-05-15";
 
+let welcomeMessageSent = false; // Variable to track if the welcome message was sent
+
 async function sendMessage() {
   const userInput = document.getElementById("user-input").value;
   if (userInput.trim() === "") return;
@@ -28,13 +30,13 @@ async function sendMessage() {
         - "How does the curriculum incorporate industry trends and technologies?"
          
          
-        Feel free to inquire about specific courses, modules, or any other aspect of the Toegepaste Informatica program. Search intensivly all information about Erasmushogeschool Brussel in folder erasmus-bot/erasmus-site-parsed \n\nUser: ${userInput}\nErasmusBot:`,
+        Feel free to inquire about specific courses, modules, or any other aspect of the Toegepaste Informatica program. Search intensively all information about Erasmushogeschool Brussel in folder erasmus-bot/erasmus-site-parsed \n\nUser: ${userInput}\nErasmusBot:`,
         max_tokens: 800,
         temperature: 0,
         top_p: 1,
         frequency_penalty: 0,
         presence_penalty: 0,
-        stop: ["<|endoftext|>", "User:", "ErasmusBot:"],
+        stop: ["\n", "User:", "ErasmusBot:"],
       }),
     });
 
@@ -51,6 +53,11 @@ async function sendMessage() {
     const data = await response.json();
     if (data.choices && data.choices.length > 0) {
       typeMessage("ErasmusBot", data.choices[0].text.trim(), "bot");
+      if (!welcomeMessageSent) {
+        welcomeMessageSent = true;
+      } else {
+        startTimer(60);
+      }
     } else {
       appendMessage("ErasmusBot", "Sorry, I couldn't get an answer.", "bot");
       console.error("No valid answer choices:", data);
@@ -61,7 +68,6 @@ async function sendMessage() {
   }
 
   document.getElementById("user-input").value = "";
-  startTimer(50); // 50 seconds timer
 }
 
 function appendMessage(sender, message, type) {
@@ -149,16 +155,25 @@ function enableInput() {
 }
 
 function startTimer(duration) {
+  const startTime = Date.now();
+  localStorage.setItem("timerStart", startTime);
+  localStorage.setItem("timerDuration", duration);
+
   let timer = duration;
   const circle = document.getElementById("timer-circle");
   const text = document.getElementById("timer-text");
   const interval = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    timer = duration - elapsed;
+
     if (timer <= 0) {
       clearInterval(interval);
+      localStorage.removeItem("timerStart");
+      localStorage.removeItem("timerDuration");
       enableInput();
       return;
     }
-    timer--;
+
     text.textContent = timer;
     const offset = 314 - (314 * timer) / duration;
     circle.style.strokeDashoffset = offset;
@@ -167,14 +182,36 @@ function startTimer(duration) {
   circle.style.animation = `countdown ${duration}s linear forwards`;
 }
 
+function checkTimer() {
+  const startTime = localStorage.getItem("timerStart");
+  const duration = localStorage.getItem("timerDuration");
+
+  if (startTime && duration) {
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    const remainingTime = duration - elapsed;
+
+    if (remainingTime > 0) {
+      disableInput();
+      startTimer(remainingTime);
+    } else {
+      localStorage.removeItem("timerStart");
+      localStorage.removeItem("timerDuration");
+    }
+  }
+}
+
 function sendWelcomeMessage() {
-  typeMessage(
-    "ErasmusBot",
-    "Hey, ask me any questions about Erasmushogeschool Brussel and I'll be happy to answer them.",
-    "bot"
-  );
+  if (!welcomeMessageSent) {
+    typeMessage(
+      "ErasmusBot",
+      "Hey, ask me any questions about Erasmushogeschool Brussel and I'll be happy to answer them.",
+      "bot"
+    );
+    welcomeMessageSent = true;
+  }
 }
 
 window.onload = function () {
   sendWelcomeMessage();
+  checkTimer(); // Check the timer when the page loads
 };
