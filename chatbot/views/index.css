@@ -10,11 +10,17 @@ body {
 
 @keyframes countdown {
   from {
-    stroke-dashoffset: 0;
-  }
-  to {
     stroke-dashoffset: 282.743;
   }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+#timer-circle {
+  stroke-dasharray: 282.743;
+  stroke-dashoffset: 0;
+  animation: countdown 60s linear forwards;
 }
 
 @keyframes fade-in-out {

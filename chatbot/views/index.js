@@ -2,7 +2,7 @@ const OPENAI_API_KEY = "17b5ea2c337b4158836434deb968ae42";
 const OPENAI_ENDPOINT =
   "https://exercices-erasmusbot.openai.azure.com/openai/deployments/EHBChatBot/completions?api-version=2023-05-15";
 
-let welcomeMessageSent = false;
+let welcomeMessageSent = false; // Variable to track if the welcome message was sent
 
 function saveMessage(sender, message, type) {
   const messages = JSON.parse(localStorage.getItem("messages")) || [];
@@ -66,11 +66,10 @@ async function sendMessage() {
 
     const data = await response.json();
     if (data.choices && data.choices.length > 0) {
+      startTimer(60); // Start the timer as soon as the bot starts typing the message
       typeMessage("ErasmusBot", data.choices[0].text.trim(), "bot");
       if (!welcomeMessageSent) {
         welcomeMessageSent = true;
-      } else {
-        startTimer(60);
       }
     } else {
       appendMessage("ErasmusBot", "Sorry, I couldn't get an answer.", "bot");
@@ -135,10 +134,11 @@ function typeMessage(sender, message, type) {
     if (index < message.length) {
       messageContent.innerHTML += message[index];
       index++;
-      setTimeout(type, 50);
+      setTimeout(type, 50); // Adjust the speed of typing here (in milliseconds)
     } else {
       chatbox.scrollTop = chatbox.scrollHeight;
       saveMessage(sender, message, type);
+      // Remove the startTimer call from here
     }
   }
 
@@ -177,6 +177,10 @@ function startTimer(duration) {
   let timer = duration;
   const circle = document.getElementById("timer-circle");
   const text = document.getElementById("timer-text");
+
+  // Initialize the timer text with the starting duration
+  text.textContent = duration;
+
   const interval = setInterval(() => {
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
     timer = duration - elapsed;
@@ -190,9 +194,13 @@ function startTimer(duration) {
     }
 
     text.textContent = timer;
-    const offset = 314 - (314 * timer) / duration;
-    circle.style.strokeDashoffset = offset;
+    const offset = 282.743 - (282.743 * timer) / duration; // Ensure the calculation is correct
+    circle.style.strokeDashoffset = offset.toFixed(2); // Round to two decimal places for precision
   }, 1000);
+
+  // Set initial strokeDasharray and strokeDashoffset
+  circle.style.strokeDasharray = "282.743";
+  circle.style.strokeDashoffset = "0";
 
   circle.style.animation = `countdown ${duration}s linear forwards`;
 }
@@ -232,11 +240,11 @@ function sendWelcomeMessage() {
 }
 
 window.onload = function () {
-  checkTimer();
   loadMessages();
   const welcomeMessageSent = localStorage.getItem("welcomeMessageSent");
   if (!welcomeMessageSent) {
     sendWelcomeMessage();
     localStorage.setItem("welcomeMessageSent", true);
   }
+  checkTimer(); // Appel à checkTimer après le chargement complet du DOM
 };
