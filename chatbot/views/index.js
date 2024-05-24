@@ -30,7 +30,7 @@ async function sendMessage() {
         - "How does the curriculum incorporate industry trends and technologies?"
          
          
-        Feel free to inquire about specific courses, modules, or any other aspect of the program. Search intensively all information about Erasmushogeschool Brussel in folder erasmus-bot/erasmus-site-parsed \n\nUser: ${userInput}\nErasmusBot:`,
+        Feel free to inquire about specific courses, modules, or any other aspect of the Toegepaste Informatica program. Search intensively all information about Erasmushogeschool Brussel in folder erasmus-bot/erasmus-site-parsed \n\nUser: ${userInput}\nErasmusBot:`,
         max_tokens: 800,
         temperature: 0,
         top_p: 1,

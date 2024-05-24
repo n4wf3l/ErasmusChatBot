@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>ErasmusBot</title>
     <link rel="icon" type="image/png" href="ai.png" />
     <link
@@ -71,18 +70,6 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-      }
-
-      #timer-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      #timer-text {
-        position: absolute;
-        text-align: center;
-        font-size: 16px;
       }
     </style>
   </head>
@@ -166,7 +153,9 @@
       ></div>
     </div>
     <canvas width="400" height="400" id="game" class="mt-60 mb-20"></canvas>
-    <div class="mb-20 bg-white w-full text-center font-bold p-5">
+    <div
+      class="footer mb-20 bg-white w-full text-center font-bold p-5 shadow-xl"
+    >
       Nawfel Ajari & Kristian Vasiaj © 2024 — AI Essentials
     </div>
     <script src="index.js"></script>
