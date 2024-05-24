@@ -4,12 +4,26 @@ const OPENAI_ENDPOINT =
 
 let welcomeMessageSent = false; // Variable to track if the welcome message was sent
 
+function saveMessage(sender, message, type) {
+  const messages = JSON.parse(localStorage.getItem("messages")) || [];
+  messages.push({ sender, message, type });
+  localStorage.setItem("messages", JSON.stringify(messages));
+}
+
+function loadMessages() {
+  const messages = JSON.parse(localStorage.getItem("messages")) || [];
+  messages.forEach((msg) => {
+    appendMessage(msg.sender, msg.message, msg.type);
+  });
+}
+
 async function sendMessage() {
   const userInput = document.getElementById("user-input").value;
   if (userInput.trim() === "") return;
 
   appendMessage("User", userInput, "user");
   disableInput();
+  saveMessage("User", userInput, "user");
 
   try {
     const response = await fetch(OPENAI_ENDPOINT, {
@@ -124,6 +138,7 @@ function typeMessage(sender, message, type) {
       setTimeout(type, 50); // Adjust the speed of typing here (in milliseconds)
     } else {
       chatbox.scrollTop = chatbox.scrollHeight;
+      saveMessage(sender, message, type);
     }
   }
 
@@ -207,11 +222,21 @@ function sendWelcomeMessage() {
       "Hey, ask me any questions about Erasmushogeschool Brussel and I'll be happy to answer them.",
       "bot"
     );
+    saveMessage(
+      "ErasmusBot",
+      "Hey, ask me any questions about Erasmushogeschool Brussel and I'll be happy to answer them.",
+      "bot"
+    );
     welcomeMessageSent = true;
   }
 }
 
 window.onload = function () {
-  sendWelcomeMessage();
   checkTimer(); // Check the timer when the page loads
+  loadMessages();
+  const welcomeMessageSent = localStorage.getItem("welcomeMessageSent");
+  if (!welcomeMessageSent) {
+    sendWelcomeMessage(); // Envoyer le message de bienvenue si ce n'est pas déjà fait
+    localStorage.setItem("welcomeMessageSent", true); // Marquer que le message de bienvenue a été envoyé
+  }
 };
