@@ -9,6 +9,8 @@ var context = canvas.getContext("2d");
 
 var grid = 16;
 var count = 0;
+var score = 0; // Variable pour stocker le score
+var highScore = localStorage.getItem("highScore") || 0; // Récupérer le plus grand score depuis le localStorage
 
 var snake = {
   x: 160,
@@ -86,6 +88,8 @@ function loop() {
     // snake ate apple
     if (cell.x === apple.x && cell.y === apple.y) {
       snake.maxCells++;
+      score++; // Increment the score
+      document.getElementById("score").innerText = score; // Update the score display
 
       // canvas is 400x400 which is 25x25 grids
       apple.x = getRandomInt(0, 25) * grid;
@@ -96,6 +100,16 @@ function loop() {
     for (var i = index + 1; i < snake.cells.length; i++) {
       // snake occupies same space as a body part. reset game
       if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
+        if (score > highScore) {
+          highScore = score;
+          localStorage.setItem("highScore", highScore); // Enregistrer le plus grand score
+        }
+
+        // Ajouter le score actuel aux anciens scores
+        let scores = JSON.parse(localStorage.getItem("scores")) || [];
+        scores.push(score);
+        localStorage.setItem("scores", JSON.stringify(scores)); // Enregistrer les scores
+
         snake.x = 160;
         snake.y = 160;
         snake.cells = [];
@@ -105,6 +119,12 @@ function loop() {
 
         apple.x = getRandomInt(0, 25) * grid;
         apple.y = getRandomInt(0, 25) * grid;
+
+        score = 0; // Reset the score
+        document.getElementById("score").innerText = "Score: " + score; // Update the score display
+        document.getElementById("highScore").innerText =
+          "High Score: " + highScore; // Update the high score display
+        displayScores(); // Update the scores display
       }
     }
   });
@@ -139,5 +159,13 @@ document.addEventListener("keydown", function (e) {
   }
 });
 
+function displayScores() {
+  let scores = JSON.parse(localStorage.getItem("scores")) || [];
+  let scoresList = scores.map((score) => `<li>${score}</li>`).join("");
+  document.getElementById("previousScores").innerHTML = scoresList;
+}
+
 // start the game
 requestAnimationFrame(loop);
+displayScores(); // Display the scores when the page loads
+document.getElementById("highScore").innerText = "High Score: " + highScore; // Display the high score when the page loads
