@@ -44,7 +44,7 @@ async function sendMessage() {
         - "How does the curriculum incorporate industry trends and technologies?"
          
          
-        Feel free to inquire about specific courses, modules, or any other aspect of the Toegepaste Informatica program. Search intensively all information about Erasmushogeschool Brussel in folder erasmus-bot/erasmus-site-parsed \n\nUser: ${userInput}\nErasmusBot:`,
+        Feel free to inquire about specific courses, modules, or any other aspect. Search intensively all information about Erasmushogeschool Brussel in folder erasmus-bot/erasmus-site-parsed \n\nUser: ${userInput}\nErasmusBot:`,
         max_tokens: 800,
         temperature: 0,
         top_p: 1,
@@ -215,7 +215,7 @@ function checkTimer() {
 
     if (remainingTime > 0) {
       disableInput();
-      startTimer(remainingTime);
+      startTimer(60); // Always restart the timer from 60 seconds
     } else {
       localStorage.removeItem("timerStart");
       localStorage.removeItem("timerDuration");
@@ -246,5 +246,5 @@ window.onload = function () {
     sendWelcomeMessage();
     localStorage.setItem("welcomeMessageSent", true);
   }
-  checkTimer(); // Appel à checkTimer après le chargement complet du DOM
+  checkTimer();
 };
