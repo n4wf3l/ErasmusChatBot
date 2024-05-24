@@ -180,6 +180,12 @@
 
     <script src="index.js"></script>
     <script src="snake.js"></script>
-    <script></script>
+    <script>
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+          event.preventDefault();
+        }
+      });
+    </script>
   </body>
 </html>
