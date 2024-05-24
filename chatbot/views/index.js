@@ -2,7 +2,7 @@ const OPENAI_API_KEY = "17b5ea2c337b4158836434deb968ae42";
 const OPENAI_ENDPOINT =
   "https://exercices-erasmusbot.openai.azure.com/openai/deployments/EHBChatBot/completions?api-version=2023-05-15";
 
-let welcomeMessageSent = false; // Variable to track if the welcome message was sent
+let welcomeMessageSent = false;
 
 function saveMessage(sender, message, type) {
   const messages = JSON.parse(localStorage.getItem("messages")) || [];
@@ -135,7 +135,7 @@ function typeMessage(sender, message, type) {
     if (index < message.length) {
       messageContent.innerHTML += message[index];
       index++;
-      setTimeout(type, 50); // Adjust the speed of typing here (in milliseconds)
+      setTimeout(type, 50);
     } else {
       chatbox.scrollTop = chatbox.scrollHeight;
       saveMessage(sender, message, type);
@@ -232,11 +232,11 @@ function sendWelcomeMessage() {
 }
 
 window.onload = function () {
-  checkTimer(); // Check the timer when the page loads
+  checkTimer();
   loadMessages();
   const welcomeMessageSent = localStorage.getItem("welcomeMessageSent");
   if (!welcomeMessageSent) {
-    sendWelcomeMessage(); // Envoyer le message de bienvenue si ce n'est pas déjà fait
-    localStorage.setItem("welcomeMessageSent", true); // Marquer que le message de bienvenue a été envoyé
+    sendWelcomeMessage();
+    localStorage.setItem("welcomeMessageSent", true);
   }
 };
