@@ -134,6 +134,25 @@
       <div class="flex flex-row align-items items-center mt-20 mb-2">
         <img src="ai.png" alt="" width="50px" />
         <h1 class="ml-2 text-4xl font-bold text-red-600">ErasmusBot</h1>
+        <button
+          id="clear-storage-button"
+          onclick="confirmClearLocalStorage()"
+          class="ml-5 bg-gray-500 text-white rounded-md p-2 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-600"
+        >
+          Clear History
+        </button>
+        <script>
+          function confirmClearLocalStorage() {
+            const confirmation = confirm(
+              "Are you sure you want to clear the history? This will delete both the conversation history and the Snake game results."
+            );
+            if (confirmation) {
+              localStorage.clear();
+              alert("History has been cleared.");
+              window.location.reload();
+            }
+          }
+        </script>
       </div>
 
       <div
@@ -149,6 +168,7 @@
         id="user-input"
         placeholder="Ask your question..."
         class="flex-grow border border-gray-300 rounded-l-md p-4 focus:outline-none focus:ring-2 focus:ring-red-600"
+        onkeydown="checkEnterKey(event)"
       />
       <button
         id="send-button"
@@ -218,6 +238,12 @@
           event.preventDefault();
         }
       });
+
+      function checkEnterKey(event) {
+        if (event.key === "Enter") {
+          sendMessage();
+        }
+      }
     </script>
   </body>
 </html>
