@@ -6,7 +6,11 @@ let welcomeMessageSent = false; // Variable to track if the welcome message was 
 
 function saveMessage(sender, message, type) {
   const messages = JSON.parse(localStorage.getItem("messages")) || [];
-  messages.push({ sender, message, type });
+  messages.push({
+    sender,
+    message,
+    type
+  });
   localStorage.setItem("messages", JSON.stringify(messages));
 }
 
@@ -93,14 +97,14 @@ function appendMessage(sender, message, type) {
   }`;
 
   const avatar =
-    type === "user"
-      ? `<img src="user.png" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">`
-      : `<img src="ai.png" alt="Bot Avatar" class="w-8 h-8 rounded-full mr-2">`;
+    type === "user" ?
+    `<img src="user.png" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">` :
+    `<img src="ai.png" alt="Bot Avatar" class="w-8 h-8 rounded-full mr-2">`;
 
   messageElement.innerHTML =
-    type === "user"
-      ? `<div class="flex items-center">${avatar}<span class="message-content bg-blue-100 p-2 rounded-lg max-w-xs">${message}</span></div>`
-      : `<div class="flex items-center">${avatar}<span class="message-content bg-green-100 p-2 rounded-lg max-w-xs">${message}</span></div>`;
+    type === "user" ?
+    `<div class="flex items-center">${avatar}<span class="message-content bg-blue-100 p-2 rounded-lg max-w-xs">${message}</span></div>` :
+    `<div class="flex items-center">${avatar}<span class="message-content bg-green-100 p-2 rounded-lg max-w-xs">${message}</span></div>`;
 
   chatbox.appendChild(messageElement);
   chatbox.scrollTop = chatbox.scrollHeight;
@@ -116,14 +120,14 @@ function typeMessage(sender, message, type) {
   }`;
 
   const avatar =
-    type === "user"
-      ? `<img src="user.png" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">`
-      : `<img src="ai.png" alt="Bot Avatar" class="w-8 h-8 rounded-full mr-2">`;
+    type === "user" ?
+    `<img src="user.png" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">` :
+    `<img src="ai.png" alt="Bot Avatar" class="w-8 h-8 rounded-full mr-2">`;
 
   messageElement.innerHTML =
-    type === "user"
-      ? `<div class="flex items-center">${avatar}<span class="message-content bg-blue-100 p-2 rounded-lg max-w-xs"></span></div>`
-      : `<div class="flex items-center">${avatar}<span class="message-content bg-green-100 p-2 rounded-lg max-w-xs"></span></div>`;
+    type === "user" ?
+    `<div class="flex items-center">${avatar}<span class="message-content bg-blue-100 p-2 rounded-lg max-w-xs"></span></div>` :
+    `<div class="flex items-center">${avatar}<span class="message-content bg-green-100 p-2 rounded-lg max-w-xs"></span></div>`;
 
   chatbox.appendChild(messageElement);
 
@@ -224,27 +228,21 @@ function checkTimer() {
 }
 
 function sendWelcomeMessage() {
-  if (!welcomeMessageSent) {
+  const messages = JSON.parse(localStorage.getItem("messages")) || [];
+  const welcomeMessageExists = messages.some(msg => msg.message.includes("Hey, ask me any questions about Erasmushogeschool Brussel"));
+
+  if (!welcomeMessageExists) {
     typeMessage(
       "ErasmusBot",
       "Hey, ask me any questions about Erasmushogeschool Brussel and I'll be happy to answer them.",
       "bot"
     );
-    saveMessage(
-      "ErasmusBot",
-      "Hey, ask me any questions about Erasmushogeschool Brussel and I'll be happy to answer them.",
-      "bot"
-    );
-    welcomeMessageSent = true;
   }
 }
 
+
 window.onload = function () {
   loadMessages();
-  const welcomeMessageSent = localStorage.getItem("welcomeMessageSent");
-  if (!welcomeMessageSent) {
-    sendWelcomeMessage();
-    localStorage.setItem("welcomeMessageSent", true);
-  }
+  sendWelcomeMessage();
   checkTimer();
 };
