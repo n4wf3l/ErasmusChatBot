@@ -1,43 +1,101 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-html,
 body {
-  height: 100%;
-  margin: 0;
+    font-family: 'Roboto', sans-serif;
 }
 
-@keyframes countdown {
-  from {
-    stroke-dashoffset: 282.743;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
+.hero-section {
+    background-color: #f8f9fa;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    padding: 20px;
+}
+
+.chatbot-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 100%;
+    max-width: 500px;
+}
+
+#chatbox {
+    height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+
+.input-container {
+    display: flex;
+}
+
+.input-container input {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.message-content {
+    font-size: 14px;
+}
+
+.timer-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.timer-container.hidden {
+    display: none;
 }
 
 #timer-circle {
-  stroke-dasharray: 282.743;
-  stroke-dashoffset: 0;
-  animation: countdown 60s linear forwards;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    transition: stroke-dashoffset 1s linear;
 }
 
-@keyframes fade-in-out {
-  0% {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-  10% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  90% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
+#timer-text {
+    position: absolute;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.message {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.message.user {
+    justify-content: flex-end;
+}
+
+.message.bot {
+    justify-content: flex-start;
+}
+
+.message-content {
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 60%;
+    word-wrap: break-word;
+}
+
+.message.user .message-content {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.message.bot .message-content {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.hidden {
+    display: none;
 }
