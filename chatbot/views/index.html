@@ -1,249 +1,747 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ErasmusBot</title>
-    <link rel="icon" type="image/png" href="ai.png" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+    <link rel="icon" type="image/png" href="ai.png">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
     <style>
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-      }
-
-      nav {
-        position: sticky;
-        top: 0;
-        width: 100%;
-        z-index: 1000;
-      }
-
-      body {
-        background: black;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-
-      canvas {
-        border: 1px solid white;
-      }
-
-      @keyframes moveArm {
-        0% {
-          transform: rotate(18deg);
-        }
-        100% {
-          transform: rotate(72deg);
-        }
-      }
-
-      .arm {
-        width: 80%;
-        animation: moveArm 10s forwards;
-        position: absolute;
-        top: 20%;
-        z-index: -1;
-      }
-
-      .arm-right {
-        left: 80%;
-      }
-
-      .arm-left {
-        right: 80%;
-        transform: scaleX(-1);
-      }
-
-      .legs {
-        top: 80%;
-        position: absolute;
-        bottom: -50px;
-        left: 50%;
-        transform: translateX(-50%) scale(1.5);
-        z-index: -1;
-      }
-
-      .chat-container {
-        position: relative;
-        width: 100%;
-        max-width: 600px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-
-      @media (max-width: 1024px) {
-        .hide-on-mobile {
-          display: none;
-        }
-        .mobile-center {
-          justify-content: center !important;
+        html,
+        body {
+            height: 100%;
+            margin: 0;
         }
 
-        .mobile-center img {
-          margin: 0 auto !important;
-        }
-      }
-
-      @media (max-width: 768px) {
-        #game,
-        #highScore,
-        #score,
-        #previousScores {
-          display: none;
+        .bebas-neue-regular {
+            font-family: "Bebas Neue", sans-serif;
+            font-weight: 400;
+            font-style: normal;
         }
 
-        .arm,
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        body {
+            background: black;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        canvas {
+            border: 1px solid white;
+        }
+
+        @keyframes moveArm {
+            0% {
+                transform: rotate(18deg);
+            }
+
+            100% {
+                transform: rotate(72deg);
+            }
+        }
+
+        .arm {
+            width: 80%;
+            animation: moveArm 10s forwards;
+            position: absolute;
+            top: 20%;
+            z-index: -1;
+        }
+
+        .arm-right {
+            left: 80%;
+        }
+
+        .arm-left {
+            right: 80%;
+            transform: scaleX(-1);
+        }
+
         .legs {
-          display: none;
+            top: 80%;
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%) scale(1.5);
+            z-index: -1;
         }
-      }
+
+        .flex-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .ml-4 {
+            margin-left: 1rem;
+            margin-bottom: 8rem;
+        }
+
+        .chat-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        @media (max-width: 1024px) {
+            .hide-on-mobile {
+                display: none;
+            }
+
+            .mobile-center {
+                justify-content: center !important;
+            }
+
+            .mobile-center img {
+                margin: 0 auto !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            #game,
+            #highScore,
+            #score,
+            #previousScores {
+                display: none;
+            }
+
+            .arm,
+            .legs {
+                display: none;
+            }
+        }
+
+        #sidebar {
+            width: 250px;
+            background: #f7f7f7;
+            padding: 20px 20px 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 80%;
+            overflow-y: auto;
+            font-family: 'Arial', sans-serif;
+        }
+
+        #sidebar h2 {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        #conversation-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #conversation-list li {
+            padding: 15px 10px;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #conversation-list li:hover {
+            background-color: #eaeaea;
+        }
+
+        #conversation-list li button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        #conversation-list li button:hover {
+            background-color: #c82333;
+        }
+
+        #new-session-button {
+            width: calc(100% - 40px);
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #new-session-button:hover {
+            background-color: #0056b3;
+        }
+
+        #messages {
+            flex: 1;
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 10px;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .user-message {
+            background-color: #e1ffc7;
+            align-self: flex-end;
+        }
+
+        .bot-message {
+            background-color: #f1f1f1;
+            align-self: flex-start;
+        }
+
+        #input-container {
+            display: flex;
+            width: 100%;
+        }
+
+        #input-container input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px 0 0 5px;
+        }
+
+        #input-container button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-left: none;
+            border-radius: 0 5px 5px 0;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+
+        #new-session-button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+        }
     </style>
-  </head>
-  <body class="bg-gray-100 flex flex-col items-center justify-center h-full">
-    <!-- Navbar -->
-    <nav class="w-full bg-white shadow-md py-4 mb-8" style="margin-top: 30%">
-      <div class="container mx-auto flex items-center justify-between px-6">
-        <!-- Logo -->
-        <div class="flex items-center space-x-4">
-          <img src="erasmuslogo.png" alt="Logo" class="w-full" />
+</head>
+
+<body class="bg-gray-100 flex flex-col items-center justify-center h-full mb-50">
+    <nav class="w-full bg-white shadow-md py-4 mb-8" style="margin-top: 0%">
+        <div class="container mx-auto flex items-center justify-between px-6">
+            <div class="flex items-center space-x-4">
+                <img src="erasmuslogo.png" alt="Logo" class="w-full">
+            </div>
+            <div class="flex flex-row align-items items-center hide-on-mobile">
+                <img src="ai.png" alt="" width="50px">
+                <h1 class="ml-2 text-xl font-bold text-red-600">ErasmusBot</h1>
+            </div>
         </div>
-        <!-- Title -->
-        <div class="flex flex-row align-items items-center hide-on-mobile">
-          <img src="ai.png" alt="" width="50px" />
-          <h1 class="ml-2 text-xl font-bold text-red-600">ErasmusBot</h1>
-        </div>
-      </div>
     </nav>
 
-    <div class="chat-container mx-auto md:mx-0 md:w-full">
-      <img
-        class="arm arm-left"
-        src="armrobot2.png"
-        alt="Bras robotisé gauche"
-      />
-      <img class="arm arm-right" src="armrobot.png" alt="Bras robotisé droit" />
-
-      <div class="flex flex-row align-items items-center mt-20 mb-2">
-        <img src="ai.png" alt="" width="50px" />
-        <h1 class="ml-2 text-4xl font-bold text-red-600">ErasmusBot</h1>
-        <button
-          id="clear-storage-button"
-          onclick="confirmClearLocalStorage()"
-          class="ml-5 bg-gray-500 text-white rounded-md p-2 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-600"
-        >
-          Clear History
+    <div id="sidebar" class="mt-20 bebas-neue-regular">
+        <h2 class="bebas-neue-regular">📜 Chat history</h2>
+        <ul id="conversation-list"></ul>
+        <button class="bebas-neue-regular" id="new-session-button" onclick="createNewSession()"
+            style="letter-spacing: 2px">
+            💬 New Chat
         </button>
-        <script>
-          function confirmClearLocalStorage() {
-            const confirmation = confirm(
-              "Are you sure you want to clear the history? This will delete both the conversation history and the Snake game results."
-            );
-            if (confirmation) {
-              localStorage.clear();
-              alert("History has been cleared.");
-              window.location.reload();
-            }
-          }
-        </script>
-      </div>
+    </div>
+    <div id="chat-container" class="chat-container mx-auto md:mx-0 md:w-full" style="margin-top: 40%;">
+        <img class="arm arm-left" src="armrobot2.png" alt="Bras robotisé gauche">
+        <img class="arm arm-right" src="armrobot.png" alt="Bras robotisé droit">
 
-      <div
-        id="chatbox"
-        class="w-full h-96 border border-gray-300 bg-white rounded-md overflow-y-scroll p-4 mb-4 shadow-lg"
-      ></div>
-      <img class="legs" src="legsrobot.png" alt="Jambes robotisées" />
+        <div class="flex flex-row align-items items-center mt-20 mb-2">
+            <img src="ai.png" alt="" width="50px">
+            <h1 class="ml-2 text-4xl font-bold text-red-600">ErasmusBot</h1>
+            <button id="clear-storage-button" onclick="confirmClearLocalStorage()"
+                class="ml-5 bg-blue-500 text-white rounded-md p-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600 bebas-neue-regular"
+                style="letter-spacing: 1px">
+                🗑 Clear
+            </button>
+        </div>
+
+        <div id="chatbox" class="w-full h-96 border border-gray-300 bg-white rounded-md p-4 mb-4 shadow-lg">
+            <div id="messages"></div>
+        </div>
+        <img class="legs" src="legsrobot.png" alt="Jambes robotisées">
     </div>
 
     <div class="flex w-full max-w-2xl items-center justify-between mb-4">
-      <input
-        type="text"
-        id="user-input"
-        placeholder="Ask your question..."
-        class="flex-grow border border-gray-300 rounded-l-md p-4 focus:outline-none focus:ring-2 focus:ring-red-600"
-        onkeydown="checkEnterKey(event)"
-      />
-      <button
-        id="send-button"
-        onclick="sendMessage()"
-        class="bg-red-500 text-white rounded-r-md p-4 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-600"
-      >
-        Send
-      </button>
+        <input type="text" id="user-input" placeholder="Ask your question..."
+            class="flex-grow border border-gray-300 rounded-l-md p-4 focus:outline-none focus:ring-2 focus:ring-red-600"
+            onkeydown="checkEnterKey(event)">
+        <button id="send-button" onclick="sendMessage()"
+            class="bg-red-500 text-white rounded-r-md p-4 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-600 bebas-neue-regular"
+            style="letter-spacing: 2px">
+            Send
+        </button>
+        <button id="speak-button" onclick="speakResponse()"
+            class="bg-blue-500 text-white rounded-md p-4 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600 ml-2">🔊
+        </button>
     </div>
     <div id="timer-container" class="hidden w-12 h-12 relative mb-4">
-      <svg class="absolute inset-0" viewBox="0 0 100 100">
-        <circle
-          cx="50"
-          cy="50"
-          r="45"
-          stroke="gray"
-          stroke-width="4"
-          fill="none"
-        ></circle>
-        <circle
-          id="timer-circle"
-          cx="50"
-          cy="50"
-          r="45"
-          stroke="red"
-          stroke-width="4"
-          fill="none"
-          stroke-dasharray="282.743"
-          stroke-dashoffset="0"
-        ></circle>
-      </svg>
-      <div
-        id="timer-text"
-        class="mt-6 absolute inset-0 flex items-center justify-center text-red-500 font-bold"
-      ></div>
+        <svg class="absolute inset-0" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="45" stroke="gray" stroke-width="4" fill="none"></circle>
+            <circle id="timer-circle" cx="50" cy="50" r="45" stroke="red" stroke-width="4" fill="none"
+                stroke-dasharray="282.743" stroke-dashoffset="0"></circle>
+        </svg>
+        <div id="timer-text" class="mt-6 absolute inset-0 flex items-center justify-center text-red-500 font-bold">
+        </div>
     </div>
-    <canvas
-      width="400"
-      height="400"
-      id="game"
-      class="mt-60 mb-10 border-4 border-white rounded-lg shadow-lg"
-    ></canvas>
-    <div
-      class="w-full max-w-md mx-auto text-center text-gray-500 p-6 rounded-lg border border-1 shadow-md mb-20 hide-on-mobile"
-    >
-      <div id="highScore" class="text-3xl font-bold mb-4">High Score: 0</div>
-      <div id="score" class="text-7xl font-semibold mb-6">0</div>
-      <ul id="previousScores" class="text-lg flex flex-wrap space-x-4">
-        <li class="mb-2">Previous Scores:</li>
-      </ul>
+    <div class="flex flex-wrap justify-center items-start">
+        <canvas width="400" height="400" id="game"
+            class="mt-60 mb-10 border-4 border-white rounded-lg shadow-lg"></canvas>
+        <div
+            class="w-full max-w-md text-center text-gray-500 p-6 rounded-lg border border-1 shadow-md mb-20 hide-on-mobile ml-4">
+            <div id="highScore" class="text-3xl font-bold mb-4">High Score: 0</div>
+            <div id="score" class="text-7xl font-semibold mb-6">0</div>
+            <ul id="previousScores" class="text-lg flex flex-wrap space-x-4">
+                <li class="mb-2">Previous Scores:</li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer bg-white w-full font-bold p-5 shadow-xl">
+        <div class="flex flex-col justify-center items-center space-x-4">
+            <p class="text-center mb-5 text-base md:text-lg">
+                Nawfel Ajari & Kristian Vasiaj © 2024 — AI Essentials
+            </p>
+            <img src="erasmuslogo.png" alt="Logo" class="w-20" />
+        </div>
     </div>
 
-    <div class="footer mb-20 bg-white w-full font-bold p-5 shadow-xl mt-20">
-      <div class="flex flex-col justify-center items-center space-x-4">
-        <p class="text-center mb-5 text-base md:text-lg">
-          Nawfel Ajari & Kristian Vasiaj © 2024 — AI Essentials
-        </p>
-        <img src="erasmuslogo.png" alt="Logo" class="w-20" />
-      </div>
-    </div>
-
-    <script src="index.js"></script>
-    <script src="snake.js"></script>
     <script>
-      document.addEventListener("keydown", function (event) {
-        if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-          event.preventDefault();
-        }
-      });
+        let lastBotMessage = '';
 
-      function checkEnterKey(event) {
-        if (event.key === "Enter") {
-          sendMessage();
+        let isTyping = false;
+
+        function speakResponse() {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(lastBotMessage);
+                utterance.lang = 'nl-NL';
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('Text-to-speech not supported in this browser.');
+            }
         }
-      }
+
+        function confirmClearLocalStorage() {
+            const confirmation = confirm(
+                "Are you sure you want to clear the history? This will delete both the conversation history and the Snake game results."
+            );
+            if (confirmation) {
+                localStorage.clear();
+                alert("History has been cleared.");
+                window.location.reload();
+            }
+        }
+
+        let sessions = JSON.parse(localStorage.getItem('sessions')) || {};
+        let currentSessionId = localStorage.getItem('currentSessionId') || generateSessionId();
+
+        if (!sessions[currentSessionId]) {
+            sessions[currentSessionId] = {
+                name: "New Session",
+                messages: []
+            };
+        }
+
+        localStorage.setItem('currentSessionId', currentSessionId);
+        localStorage.setItem('sessions', JSON.stringify(sessions));
+
+        function loadSessionOptions() {
+            const conversationList = document.getElementById("conversation-list");
+            conversationList.innerHTML = "";
+            for (const sessionId in sessions) {
+                const li = document.createElement("li");
+                li.textContent = truncateText(sessions[sessionId].name, 40); // Troncature à 16 caractères
+                li.onclick = () => switchSession(sessionId);
+
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "X";
+                deleteButton.style.padding = "2px 6px"; // Ajustez la taille du bouton
+                deleteButton.style.fontSize = "12px"; // Ajustez la taille de la police
+                deleteButton.style.marginLeft = "10px"; // Espace entre le texte et le bouton
+                deleteButton.onclick = (event) => {
+                    event.stopPropagation();
+                    deleteSession(sessionId);
+                };
+
+                li.appendChild(deleteButton);
+                conversationList.appendChild(li);
+            }
+        }
+
+        function switchSession(sessionId) {
+            currentSessionId = sessionId;
+            localStorage.setItem('currentSessionId', currentSessionId);
+
+            if (sessions[sessionId].messages.length === 0) {
+                sessions[sessionId].messages.push({
+                    role: 'bot',
+                    content: "Hey, ask me any questions about Erasmushogeschool Brussel and I'll be happy to answer them."
+                });
+                localStorage.setItem('sessions', JSON.stringify(sessions));
+            }
+
+            displayMessages();
+        }
+
+        function createNewSession() {
+            currentSessionId = generateSessionId();
+            sessions[currentSessionId] = {
+                name: "New Session",
+                messages: [{
+                    role: 'bot',
+                    content: "Hey, ask me any questions about Erasmushogeschool Brussel and I'll be happy to answer them."
+                }]
+            };
+            localStorage.setItem('sessions', JSON.stringify(sessions));
+            localStorage.setItem('currentSessionId', currentSessionId);
+            loadSessionOptions();
+            displayMessages();
+        }
+
+
+        function truncateText(text, maxLength) {
+            return text.length > maxLength ?
+                text.substring(0, maxLength) + "..." :
+                text;
+        }
+
+        function deleteSession(sessionId) {
+            delete sessions[sessionId];
+            localStorage.setItem('sessions', JSON.stringify(sessions));
+            if (sessionId === currentSessionId) {
+                currentSessionId = Object.keys(sessions)[0] || generateSessionId();
+                if (!sessions[currentSessionId]) {
+                    sessions[currentSessionId] = {
+                        name: "New Session",
+                        messages: []
+                    };
+                }
+                localStorage.setItem('currentSessionId', currentSessionId);
+            }
+            loadSessionOptions();
+            displayMessages();
+        }
+
+        function displayMessages() {
+            const messages = document.getElementById('messages');
+            messages.innerHTML = '';
+            const sessionMessages = sessions[currentSessionId].messages || [];
+            sessionMessages.forEach(msg => {
+                displayMessage(msg.content, msg.role === 'user' ? 'user-message' : 'bot-message');
+            });
+        }
+
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input').value;
+            if (userInput.trim() === '') return;
+
+            const cleanedInput = cleanInput(userInput);
+
+            const userMessage = {
+                role: 'user',
+                content: cleanedInput
+            };
+            sessions[currentSessionId].messages.push(userMessage);
+
+            if (sessions[currentSessionId].name === "New Session") {
+                sessions[currentSessionId].name = cleanedInput;
+                loadSessionOptions();
+            }
+
+            displayMessage(cleanedInput, 'user-message');
+            document.getElementById('user-input').value = '';
+
+            try {
+                const response = await fetch('http://localhost:3000/api/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        sessionId: currentSessionId,
+                        prompt: cleanedInput,
+                        conversationHistory: sessions[currentSessionId].messages
+                    })
+                });
+
+                const data = await response.json();
+                const botMessage = {
+                    role: 'bot',
+                    content: data.response
+                };
+
+                sessions[currentSessionId].messages.push(botMessage);
+                localStorage.setItem('sessions', JSON.stringify(sessions));
+
+                displayMessage(botMessage.content, 'bot-message');
+                lastBotMessage = botMessage.content;
+                startCooldown();
+            } catch (error) {
+                console.error('Error:', error);
+                displayMessage('Sorry, there was an error processing your request.', 'bot-message');
+            }
+        }
+
+        function typeMessage(container, message, callback) {
+            let index = 0;
+
+            function type() {
+                if (index < message.length) {
+                    container.innerHTML += message.charAt(index);
+                    index++;
+                    setTimeout(type, 50); // Délai entre chaque caractère (ajustez au besoin)
+                } else {
+                    callback();
+                }
+            }
+            type();
+        }
+
+        function displayMessage(message, className, isBot = false) {
+            const messageContainer = document.createElement('div');
+            messageContainer.className = `message ${className} flex items-start`;
+
+            const image = document.createElement('img');
+            image.className = 'w-8 h-8 mr-2';
+            if (className === 'user-message') {
+                image.src = 'user.png';
+            } else {
+                image.src = 'ai.png';
+            }
+
+            const textContainer = document.createElement('div');
+            textContainer.className = 'bg-white p-2 rounded-md shadow-md';
+
+            messageContainer.appendChild(image);
+            messageContainer.appendChild(textContainer);
+
+            document.getElementById('messages').appendChild(messageContainer);
+            document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+
+            if (isBot && !isTyping) {
+                isTyping = true;
+                typeMessage(textContainer, message, () => {
+                    isTyping = false;
+                });
+            } else {
+                textContainer.innerText = message;
+            }
+        }
+
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input').value;
+            if (userInput.trim() === '') return;
+
+            const cleanedInput = cleanInput(userInput);
+
+            const userMessage = {
+                role: 'user',
+                content: cleanedInput
+            };
+            sessions[currentSessionId].messages.push(userMessage);
+
+            if (sessions[currentSessionId].name === "New Session") {
+                sessions[currentSessionId].name = cleanedInput;
+                loadSessionOptions();
+            }
+
+            displayMessage(cleanedInput, 'user-message');
+            document.getElementById('user-input').value = '';
+
+            try {
+                const response = await fetch('http://localhost:3000/api/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        sessionId: currentSessionId,
+                        prompt: cleanedInput,
+                        conversationHistory: sessions[currentSessionId].messages
+                    })
+                });
+
+                const data = await response.json();
+                const botMessage = {
+                    role: 'bot',
+                    content: data.response
+                };
+
+                sessions[currentSessionId].messages.push(botMessage);
+                localStorage.setItem('sessions', JSON.stringify(sessions));
+
+                displayMessage(botMessage.content, 'bot-message', true);
+                lastBotMessage = botMessage.content;
+                startCooldown();
+            } catch (error) {
+                console.error('Error:', error);
+                displayMessage('Sorry, there was an error processing your request.', 'bot-message');
+            }
+        }
+
+        function cleanInput(input) {
+            const phrase = 'im end';
+            if (input.toLowerCase().endsWith(phrase)) {
+                return input.slice(0, -phrase.length).trim();
+            }
+            return input;
+        }
+
+        function generateSessionId() {
+            return 'session-' + Math.random().toString(36).substr(2, 9);
+        }
+
+        loadSessionOptions();
+        displayMessages();
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+                event.preventDefault();
+            }
+        });
+
+        function checkEnterKey(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        }
+
+        function startCooldown() {
+            const sendButton = document.getElementById('send-button');
+            const userInput = document.getElementById('user-input');
+            const timerContainer = document.getElementById('timer-container');
+            const timerText = document.getElementById('timer-text');
+            const timerCircle = document.getElementById('timer-circle');
+
+            const totalLength = 2 * Math.PI * 45; // Circumference of the circle
+            const cooldownEnd = Date.now() + 60000; // 60 seconds from now
+
+            localStorage.setItem('cooldownEnd', cooldownEnd);
+
+            sendButton.disabled = true;
+            userInput.disabled = true; // Disable user input field
+            timerContainer.classList.remove('hidden');
+
+            function updateTimer() {
+                const now = Date.now();
+                const timeLeft = Math.max((cooldownEnd - now) / 1000, 0);
+                timerText.textContent = Math.ceil(timeLeft);
+
+                const progress = (timeLeft / 60) * totalLength;
+                timerCircle.style.strokeDashoffset = totalLength - progress;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    sendButton.disabled = false;
+                    userInput.disabled = false; // Enable user input field
+                    timerContainer.classList.add('hidden');
+                    localStorage.removeItem('cooldownEnd');
+                }
+            }
+
+            updateTimer();
+            const timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function checkCooldown() {
+            const cooldownEnd = localStorage.getItem('cooldownEnd');
+            if (cooldownEnd) {
+                const timeLeft = (cooldownEnd - Date.now()) / 1000;
+                if (timeLeft > 0) {
+                    const sendButton = document.getElementById('send-button');
+                    const userInput = document.getElementById('user-input');
+                    const timerContainer = document.getElementById('timer-container');
+                    const timerText = document.getElementById('timer-text');
+                    const timerCircle = document.getElementById('timer-circle');
+
+                    const totalLength = 2 * Math.PI * 45; // Circumference of the circle
+
+                    sendButton.disabled = true;
+                    userInput.disabled = true; // Disable user input field
+                    timerContainer.classList.remove('hidden');
+
+                    function updateTimer() {
+                        const now = Date.now();
+                        const timeLeft = Math.max((cooldownEnd - now) / 1000, 0);
+                        timerText.textContent = Math.ceil(timeLeft);
+
+                        const progress = (timeLeft / 60) * totalLength;
+                        timerCircle.style.strokeDashoffset = totalLength - progress;
+
+                        if (timeLeft <= 0) {
+                            clearInterval(timerInterval);
+                            sendButton.disabled = false;
+                            userInput.disabled = false; // Enable user input field
+                            timerContainer.classList.add('hidden');
+                            localStorage.removeItem('cooldownEnd');
+                        }
+                    }
+
+                    updateTimer();
+                    const timerInterval = setInterval(updateTimer, 1000);
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', checkCooldown);
     </script>
-  </body>
+    <script src="snake.js"></script>
+</body>
+
 </html>
