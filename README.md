@@ -19,16 +19,18 @@ This project, developed in collaboration with Kristian Vasiaj, is part of an aca
    - Navigate to the cloned repository.
 
 3. **Execute the Following Commands:**
+   
    cd chatbot/views
    npm install
    npm install -g http-server
    $env:Path += ";C:\Users\[YourName]\AppData\Roaming\npm"
    http-server
 
-4. **Open a Second Terminal:**
+5. **Open a Second Terminal:**
    - Navigate to the same directory.
 
-5. **Execute the Following Commands:**
+6. **Execute the Following Commands:**
+   
    cd chatbot/views
    node server.js
 
