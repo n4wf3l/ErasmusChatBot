@@ -34,6 +34,9 @@ This project, developed in collaboration with Kristian Vasiaj, is part of an aca
    - cd chatbot/views
    - node server.js
 
+![MicrosoftTeams-image_2](https://github.com/n4wf3l/ErasmusChatBot/assets/101114997/da7e5db8-fea8-489a-883c-3d8d7ff53fe7)
+![MicrosoftTeams-image_4](https://github.com/n4wf3l/ErasmusChatBot/assets/101114997/bd9cdd27-cf7b-47ad-9a03-64a4c5e516f4)
+
 ## License and Usage Restrictions
 This project is for academic purposes only and cannot be copied or used for commercial purposes. Unauthorized use, reproduction, or distribution of this project, or any portion of it, may result in severe civil and criminal penalties.
 
