@@ -32,7 +32,17 @@ This project, developed in collaboration with Kristian Vasiaj, is part of an aca
 6. **Execute the Following Commands:**
    
    - cd chatbot/views
-   - node server.js
+   - set the environment variables below, then run `node server.js`
+
+   | Variable | Purpose |
+   |---|---|
+   | `AZURE_SEARCH_ENDPOINT`, `AZURE_SEARCH_API_KEY`, `AZURE_SEARCH_INDEX` | Azure AI Search index |
+   | `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_API_KEY` | Azure OpenAI deployment |
+   | `ALLOWED_ORIGINS` | comma-separated frontend origins (default `http://localhost:8080,http://127.0.0.1:8080`) |
+   | `API_TOKEN` | optional; when set, clients must send it in the `x-api-token` header |
+   | `RATE_LIMIT` | requests per minute per IP (default 10) |
+
+   Never commit these values.
 
 ![MicrosoftTeams-image_2](https://github.com/n4wf3l/ErasmusChatBot/assets/101114997/da7e5db8-fea8-489a-883c-3d8d7ff53fe7)
 ![MicrosoftTeams-image_4](https://github.com/n4wf3l/ErasmusChatBot/assets/101114997/bd9cdd27-cf7b-47ad-9a03-64a4c5e516f4)
